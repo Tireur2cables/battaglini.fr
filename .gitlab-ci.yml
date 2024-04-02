@@ -3,6 +3,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy
+  when: manual
   tags:
     - production
   script:
@@ -12,3 +13,5 @@ deploy-job:      # This job runs in the deploy stage.
     - cp -r dist/* /battaglini.fr/
     - cd
     - rm -rf builds
+  only:
+    - main
