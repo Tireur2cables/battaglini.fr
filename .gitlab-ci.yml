@@ -1,0 +1,14 @@
+# COPY package*.json ./
+# RUN npm install
+# COPY . .
+# RUN npm run build
+
+stages:          # List of stages for jobs, and their order of execution
+  - deploy
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy
+  tags:
+    - production
+  script:
+    - ls
