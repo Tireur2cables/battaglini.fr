@@ -8,4 +8,5 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - npm install
     - npm run build
-
+  after_script:
+    - cp dist/* /battaglini.fr/
