@@ -11,4 +11,4 @@ deploy-job:      # This job runs in the deploy stage.
   tags:
     - production
   script:
-    - ls
+    - pwd
