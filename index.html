@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- Meta tags -->
+        <!-- Metadata tags -->
+        
+        <!-- Primary Meta Tags -->
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <!-- Primary Meta Tags -->
-        <title>Solar System - View our Solar system in 3D interactive view!</title>
         <meta name="title" content="Solar System - View our Solar system in 3D interactive view!">
         <meta name="description" content="A replica of out Solar system with interactive planets. Learn something about planets and their moons. ">
-
+        
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://honzaap.github.io/SolarSystem">
         <meta property="og:title" content="Solar System - View our Solar system in 3D interactive view!">
         <meta property="og:description" content="A replica of out Solar system with interactive planets. Learn something about planets and their moons. ">
         <meta property="og:image" content="https://honzaap.github.io/SolarSystem/assets/ogmeta.png">
-
+        
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image">
         <meta property="twitter:url" content="https://honzaap.github.io/SolarSystem">
         <meta property="twitter:title" content="Solar System - View our Solar system in 3D interactive view!">
         <meta property="twitter:description" content="A replica of out Solar system with interactive planets. Learn something about planets and their moons. ">
         <meta property="twitter:image" content="https://honzaap.github.io/SolarSystem/assets/ogmeta.png">
-
-        <base href="./">
-        <link rel="icon" href="./favicon.ico" />
-
+        
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500&family=Chivo:wght@400;700&display=swap" rel="stylesheet">
+        
+        
+        <title>Solar System - View our Solar system in 3D interactive view!</title>
+        <base target="_blank">
+        <link rel="icon" href="/favicon.ico">
+        <link rel="stylesheet" href="/assets/sass/main.scss">
     </head>
     <body>
-        <h1>Our Solar System</h1>
-        <div id="app"></div>
         <!-- GitHub Corner. Provided by https://github.com/cedoor -->
 		<a href="https://github.com/honzaap/SolarSystem" target="_blank" class="github-corner" style="z-index: 5000; position: absolute; top: 0; border: 0; right: 0;">
 
@@ -44,6 +44,9 @@
 		</a>
 		<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 		<!-- End GitHub Corner. -->
-        <script type="module" src="./src/main.js"></script>
+        
+        <h1>Our Solar System</h1>
+        <div id="app"></div>
+        <script type="module" src="./src/main.ts"></script>
     </body>
 </html>

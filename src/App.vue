@@ -1,6 +1,7 @@
 <template>
-    <Scene @onSceneLoad="onSceneLoad" />
-    <div ref="loading" class="loading-screen">
+
+    <Scene @onSceneLoad="sceneLoaded = true" />
+    <div v-if="!sceneLoaded" class="loading-screen">
         <div class="planet">
             <div class="cloud"></div>
             <div class="cloud"></div>
@@ -8,23 +9,20 @@
         </div>
         <p>Loading...</p>
     </div>
+
 </template>
 
-<script>
-    import Scene from "./components/Scene.vue";
-    export default {
-        components: {
-            Scene,
-        },
-        methods: {
-            onSceneLoad() {
-                this.$refs.loading.style.display = "none";
-            }
-        }
-    }
+<script setup lang="ts">
+
+    import Scene from "@/components/Scene.vue";
+    import { ref } from "vue";
+
+    const sceneLoaded = ref<boolean>(false);
+
 </script>
 
 <style scoped lang="scss">
+
     .loading-screen {
         position: absolute;
         top: 0;
@@ -77,4 +75,5 @@
             transform: translateX(90px);
         }
     }
+
 </style>

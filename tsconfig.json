@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "types": ["node", "three"],
+    "target": "ES6",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    //   "lib": [
+      //     "ES2020",
+      //     "DOM",
+      //     "DOM.Iterable"
+      //   ],
+    // "useDefineForClassFields": true,
+    // "skipLibCheck": true,
+    // "composite": true,
+    // "allowSyntheticDefaultImports": true,
+    // "allowImportingTsExtensions": true,
+    // "resolveJsonModule": true,
+    // "isolatedModules": true,
+    // "noEmit": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@assets/*": [
+        "./public/assets/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ]
+    },
+    //   "jsx": "preserve",
+    //   /* Linting */
+    //   "strict": true,
+    //   "noUnusedLocals": true,
+    //   "noUnusedParameters": true,
+    //   "noFallthroughCasesInSwitch": true
+  },
+  // "include": [
+  //   "src/**/*.ts",
+  //   "src/**/*.d.ts",
+  //   "src/**/*.tsx",
+  //   "src/**/*.vue",
+  //   "vite.config.ts"
+  // ]
+}
