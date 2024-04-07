@@ -1,4 +1,5 @@
 <template>
+
     <div class="planet-card">
         <img class="planet-img" :src="`./assets/cards/${planetInfo.name}.png`" :alt="planetInfo.displayName">
         <div class="title">
@@ -42,43 +43,46 @@
             </ul>
         </div>
     </div>
+
 </template>
 
-<script>
-export default {
-    props: {
-        planetInfo: Object,
-    },
-    data() {
-        return {
-            temperatureColors: {
-                "-130": "#a8f1ff",
-                "-90": "#1fb6d0",
-                "-40": "#c4f987",
-                10: "#c4f987",
-                50: "#ffcc33",
-                90: "#ee6600",
-                150: "#990000",
+<script setup lang="ts">
+
+    import { ref } from 'vue';
+
+    const temperatureColors = ref({
+        "-130": "#a8f1ff",
+        "-90": "#1fb6d0",
+        "-40": "#c4f987",
+        10: "#c4f987",
+        50: "#ffcc33",
+        90: "#ee6600",
+        150: "#990000",
+    });
+    const emits = defineEmits(["closeCard"]);
+
+    const props = defineProps({
+        planetInfo: {
+            type: Object,
+            required: true,
+        },
+    });
+
+    function temperatureColor(temp) {
+        const keys = Object.keys(temperatureColors.value).map(t => parseInt(t));
+        keys.sort((a, b) => (+a) - (+b));
+        for (let key of keys) {
+            if (key > temp) {
+                return this.temperatureColors.value[key];
             }
         }
-    },
-    emits: ["closeCard"],
-    methods: {
-        temperatureColor(temp) {
-            const keys = Object.keys(this.temperatureColors).map(t => parseInt(t));
-            keys.sort((a, b) => (+a) - (+b));
-            for(let key of keys) {
-                if(key > temp) {
-                    return this.temperatureColors[key];
-                }
-            }
-            return this.temperatureColors[keys[keys.length - 1]];
-        }
+        return temperatureColors.value[keys[keys.length - 1]];
     }
-}
+
 </script>
 
 <style scoped lang="scss">
+
     .planet-card {
         position: absolute;
         left: 15px;
@@ -89,6 +93,7 @@ export default {
         box-shadow: -8px -9px 14px rgb(255 255 255 / 8%);
         overflow: hidden;
         font-size: 14px;
+
         .planet-img{
             width: 100%;
             position: absolute;
@@ -98,6 +103,7 @@ export default {
             z-index: -1;
             background-color: var(--secondary);
         }
+
         .info {
             margin-top: 150px;
             min-height: 250px;
@@ -105,20 +111,24 @@ export default {
             border-radius: var(--radius);
             background: linear-gradient(131.76deg, var(--primary) -34.78%, var(--dark) 93.37%);
             padding: 6px 12px;
+
             h5 {
                 text-align: center;
                 font-size: 18px;
                 color: var(--tertiary);
                 font-weight: 100;
             }
+
             ul {
                 margin: 10px 0;
                 text-align: left;
                 list-style: none;
                 padding-left: 0;
+
                 li {
                     margin: 4px 0;
                     color: #d5d5d5;
+
                     .value {
                         font-weight: bold;
                         color: #fff;
@@ -126,17 +136,20 @@ export default {
                 }
             }
         }
+
         .title{
             position: absolute;
             text-align: center;
             top: 2px;
             width: 100%;
+
             h2 {
                 text-transform: uppercase;
                 font-weight: 400;
                 font-size: 20px;
             }
         }
+
         .temperature {
             position: absolute;
             top: 50px;
@@ -145,14 +158,17 @@ export default {
             text-shadow: -4px 1px 11px #000;
             font-size: 14px;
             font-weight: lighter;
+
             .value {
                 font-weight: bold;
                 text-shadow: 0 0 10px #fff;
             }
+
             .icon {
                 vertical-align: middle;
             }
         }
+
         .close {
             position: absolute;
             top: 2px;
@@ -163,10 +179,12 @@ export default {
             font-size: 24px;
             cursor: pointer;
         }
+
         .description {
             margin: 6px 0;
         }
     }
+
     @media (max-width: 560px) {
         .planet-card {
             width: auto;
@@ -177,14 +195,17 @@ export default {
             right: 10px;
             bottom: 20px;
             z-index: 4;
+
             .info {
                 top: 250px;
             }
+
             .close {
                 font-size: 32px;
             }
         }
     }
+
     @media (max-height: 360px) {
         .planet-card {
             width: auto;
@@ -195,10 +216,12 @@ export default {
             right: 10px;
             bottom: 10px;
             z-index: 4;
+
             .planet-img {
                 height: 100%;
                 width: auto;
             }
+
             .info {
                 top: 0;
                 right: 0;
@@ -206,13 +229,16 @@ export default {
                 height: 100%;
                 left: 230px;
             }
+
             .title {
                 max-width: 250px;
             }
+
             .temperature {
                 left: 110px;
                 right: auto;
             }
+
             .close {
                 right: auto;
                 left: 6px;
@@ -220,4 +246,5 @@ export default {
             }
         }
     }
+
 </style>

@@ -311,4 +311,4 @@ export const PLANETS = [
         orbitalInclination: 156.885,
     },
     /* - - Moons - - */
-]
+];

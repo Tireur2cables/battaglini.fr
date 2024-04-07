@@ -1,4 +1,5 @@
 <template>
+
     <div class="options">
         <div class="form-group">
             <label>Speed</label>
@@ -22,33 +23,34 @@
             </div>
         </div>
     </div>
+
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            speed: "day_sec"
-        }
-    },
-    emits: ["speedChanged"],
-    methods: {
-        onSpeedChange(e) {
-            const value = e.target.value;
-            this.$emit('speedChanged', value);
-        }
-    },
-    mounted() {
-        this.$emit('speedChanged', this.speed);
+<script setup lang="ts">
+    
+    import { ref, onMounted } from 'vue';
+
+    const speed = ref<string>("day_sec");
+    const emits = defineEmits(["speedChanged"]);
+    
+    function onSpeedChange(e) {
+        speed.value = e.target.value;
+        emits('speedChanged', speed.value);
     }
-}
+
+    onMounted(() => {
+        emits('speedChanged', speed.value);
+    });
+
 </script>
 
 <style scoped lang="scss">
+
     .options {
         position: absolute;
         right: 10px;
         top: 100px;
+
         .form-group {
             margin: 15px 5px;
             text-align: center;
@@ -56,6 +58,7 @@ export default {
                 font-size: 18px;
             }
         }
+
         .input-select {
             background-color: var(--primary);
             border-radius: var(--radius);
@@ -63,17 +66,21 @@ export default {
             max-width: 115px;
             margin-left: auto;
             overflow: hidden;
+
             .select-item {
                 display: flex;
                 justify-content: stretch;
                 align-items: stretch;
                 text-align: center;
+
                 input {
                     appearance: none;
+
                     &:checked + label {
                         background-color: var(--tertiary);
                     }
                 }
+
                 label {
                     padding: 10px 16px;
                     cursor: pointer;
@@ -81,6 +88,7 @@ export default {
                 }
             }
         }
+
         .input-check {
             appearance: none;
             margin-top: 8px;
@@ -91,17 +99,21 @@ export default {
             border-radius: 50%;
             cursor: pointer;
             margin-right: 10px;
+
             &:checked {
                 background-color: var(--tertiary)
             }
+
             & + label{
                 cursor: pointer;
             }
         }
     }
+
     @media (max-height: 360px) {
         .options {
             top: 50px;
         }
     }
+
 </style>
