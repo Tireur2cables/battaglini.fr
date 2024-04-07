@@ -178,7 +178,7 @@
         const planets = []; // List of Object3D of planets
         for (let planet of PLANETS) {
             // Load 3D model
-            let gltf = await loader.loadAsync(`./assets/gltf/${planet.name}.glb`);
+            let gltf = await loader.loadAsync(`/assets/gltf/${planet.name}.glb`);
             let updateObject;
             let userData = getUserDataFor(planet);
             // Get the object the planet is orbitting
@@ -385,19 +385,19 @@
         scene.add(ambientLight);
 
         // Light from the Sun
-        const pointLight = new THREE.PointLight(0xffe8e0, 1.5, 300);
-        scene.add(pointLight);
+        // const pointLight = new THREE.PointLight(0xffe8e0, 1.5, 300);
+        // scene.add(pointLight);
 
         const textureLoader = new THREE.TextureLoader();
 
-        const textureFlare0 = textureLoader.load( "./assets/textures/lensflare0.png" );
+        // const textureFlare0 = textureLoader.load( "./assets/textures/lensflare0.png" );
         const textureFlare1 = textureLoader.load( "./assets/textures/lensflare1.png" );
 
-        const lensflare = new Lensflare();
-        lensflare.layers.enable(1);
-        lensflare.addElement( new LensflareElement(textureFlare0, 100));
-        lensflare.addElement( new LensflareElement(textureFlare1, 40));
-        pointLight.add(lensflare);
+        // const lensflare = new Lensflare();
+        // lensflare.layers.enable(1);
+        // lensflare.addElement( new LensflareElement(textureFlare0, 100));
+        // lensflare.addElement( new LensflareElement(textureFlare1, 40));
+        // pointLight.add(lensflare);
 
         // Lights used to bright up the sun
         const rectLight1 = new THREE.RectAreaLight(0xffffff, 7, 20, 25);
