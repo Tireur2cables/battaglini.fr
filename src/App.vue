@@ -1,5 +1,5 @@
 <template>
-
+    <h1>Battaglini technosystem</h1>
     <Scene @onSceneLoad="sceneLoaded = true" />
     <div v-if="!sceneLoaded" class="loading-screen">
         <div class="planet">
