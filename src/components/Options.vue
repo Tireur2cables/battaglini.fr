@@ -4,7 +4,7 @@
         <div class="form-group">
             <label>Speed</label>
             <div class="input-select">
-                    <div class="select-item">
+                <div class="select-item">
                     <input name="speed" id="realtime" type="radio" value="realtime" v-model="speed" @change="onSpeedChange">
                     <label for="realtime">Realtime</label>
                 </div>

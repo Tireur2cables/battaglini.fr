@@ -31,10 +31,6 @@
             <p class="description">{{ planetInfo.description }}</p>
             <ul>
                 <li>Radius: <span class="value">{{ planetInfo.radius }} km</span></li>
-                <li v-if="planetInfo.timesLarger && planetInfo.timesLarger !== -1">
-                    <span v-if="planetInfo.timesLarger >= 1"><span class="value">{{ planetInfo.timesLarger }}x</span> larger than Earth</span>
-                    <span v-else><span class="value">{{ (1 / planetInfo.timesLarger).toFixed(2) }}x</span> smaller than Earth</span>
-                </li>
                 <li v-if="planetInfo.distanceFromSun && planetInfo.distanceFromSun !== -1">Distance from Sun: <span class="value">{{ planetInfo.distanceFromSun }} AU</span></li>
                 <li v-if="planetInfo.distance">Distance from {{ planetInfo.orbitObject.charAt(0).toUpperCase() + planetInfo.orbitObject.slice(1) }}: <span class="value">{{ planetInfo.distance }} km</span></li>
                 <li v-if="planetInfo.year">1 year: <span class="value">{{ planetInfo.year }}</span></li>

@@ -18,7 +18,7 @@
     import * as THREE from "three";
     import { OrbitControls } from "three/addons/controls/OrbitControls";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
-    import { Lensflare, LensflareElement } from "three/examples/jsm/objects/Lensflare.js";
+    // import { Lensflare, LensflareElement } from "three/examples/jsm/objects/Lensflare.js";
     import { PLANETS } from "@/constants";
     import Options from "@components/Options.vue";
     import PlanetCard from "@components/PlanetCard.vue";
@@ -57,8 +57,6 @@
         const mouse = new THREE.Vector2();
 
         const raycaster = new THREE.Raycaster();
-
-        THREE.Object3D.prototype.tick = (e) => {}
 
         let hoverObject = {
             planet: null,
@@ -152,7 +150,7 @@
                     return;
                 }
                 // Set default distance and target to sun
-                if (planet.name === "sun") { 
+                if (planet.name === "nicolas") { 
                     controls.minDistance = 60;
                     controls.maxDistance = 500;
                     controls.target.set(0, 0, 0);
@@ -350,12 +348,11 @@
             antialias: true,
             alpha: true,
         });
-        renderer.setClearColor( 0x000000, 0 );
+        renderer.setClearColor(0x000000, 0);
 
         resizeRenderer(renderer);
 
         renderer.autoClearColor = false;
-        renderer.outputEncoding = THREE.LinearEncoding;
         renderer.render(scene, camera);
 
         return renderer;
@@ -388,11 +385,10 @@
         // const pointLight = new THREE.PointLight(0xffe8e0, 1.5, 300);
         // scene.add(pointLight);
 
-        const textureLoader = new THREE.TextureLoader();
-
+        // Add a sun texture to the point of light
+        // const textureLoader = new THREE.TextureLoader();
         // const textureFlare0 = textureLoader.load( "./assets/textures/lensflare0.png" );
-        const textureFlare1 = textureLoader.load( "./assets/textures/lensflare1.png" );
-
+        // const textureFlare1 = textureLoader.load( "./assets/textures/lensflare1.png" );
         // const lensflare = new Lensflare();
         // lensflare.layers.enable(1);
         // lensflare.addElement( new LensflareElement(textureFlare0, 100));
@@ -400,15 +396,15 @@
         // pointLight.add(lensflare);
 
         // Lights used to bright up the sun
-        const rectLight1 = new THREE.RectAreaLight(0xffffff, 7, 20, 25);
-        rectLight1.position.set(-12, 0, 0);
-        rectLight1.lookAt(0, 0, 0)
-        scene.add(rectLight1);
+        // const rectLight1 = new THREE.RectAreaLight(0xffffff, 7, 20, 25);
+        // rectLight1.position.set(-12, 0, 0);
+        // rectLight1.lookAt(0, 0, 0)
+        // scene.add(rectLight1);
 
-        const rectLight2 = new THREE.RectAreaLight(0xffffff, 7, 20, 25);
-        rectLight2.position.set(12, 0, 0);
-        rectLight2.lookAt(0, 0, 0)
-        scene.add(rectLight2);
+        // const rectLight2 = new THREE.RectAreaLight(0xffffff, 7, 20, 25);
+        // rectLight2.position.set(12, 0, 0);
+        // rectLight2.lookAt(0, 0, 0)
+        // scene.add(rectLight2);
 
         const rectLight3 = new THREE.RectAreaLight(0xffffff, 7, 20, 20);
         rectLight3.position.set(0, 10, 12);
@@ -491,7 +487,6 @@
             meanTemp: planet.meanTemp,
             minTemp: planet.minTemp,
             maxTemp: planet.maxTemp,
-            timesLarger: planet.timesLarger,
             orbitObject: planet.orbitObject,
             isPlanet: true,
             orbitalVelocity: planet.orbitalVelocity,
