@@ -7,10 +7,11 @@ build-job:
   tags:
     - podman-in-podman
   script:
-    - podman run -v ./frontend:/frontend docker.io/node:20.11.1-alpine /bin/bash -c "cd /frontend && npm ci && npm run build"
+    - podman run -v ./battaglini.fr:/battaglini.fr docker.io/node:20.11.1-alpine /bin/bash -c "cd /battaglini.fr && npm ci && npm run build"
   after_script:
     - podman system prune -af
-    - rm -rf ./frontend
+    - cd
+    - rm -rf builds
   only:
     - merge_requests
 
