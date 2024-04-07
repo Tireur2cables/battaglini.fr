@@ -11,14 +11,16 @@ The website is developped with Vue.js and Three.js.
 
 ## Base model repository
 
-This repository is a forked from [honzaap's](https://github.com/honzaap) [solar system](https://github.com/honzaap/SolarSystem) repository.
+This repository is a fork of [honzaap's](https://github.com/honzaap) [solar system](https://github.com/honzaap/SolarSystem) repository.
 
 ## How does it work? 
-- Move around the techno system with your mouse (hold left click and play with your wheel)
+
+- Move around the techno system with your mouse (hold left click, move your mouse and play with the wheel)
 - Click on service icon to find out more about it
 - Select the desired service with side menu
 
-## How to install
+## Installation
+
 - Clone repository to your local machine:  
 ```bash
 git clone https://github.com/Tireur2cables/battaglini.fr
