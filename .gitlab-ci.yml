@@ -7,8 +7,7 @@ build-job:
   tags:
     - podman-in-podman
   script:
-    - ls
-    - podman run -v ./battaglini.fr:/battaglini.fr docker.io/node:20.11.1-alpine /bin/bash -c "ls /"
+    - podman run -v ../battaglini.fr:/battaglini.fr docker.io/node:20.11.1-alpine /bin/bash -c "cd /battaglini.fr && npm ci && npm run build"
   after_script:
     - podman system prune -af
     - cd
