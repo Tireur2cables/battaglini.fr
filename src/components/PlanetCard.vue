@@ -5,7 +5,7 @@
         <div class="title">
             <h2>{{ planetInfo.displayName }}</h2>
         </div>
-        <button class="close" @click="this.$emit('closeCard')">×</button>
+        <button class="close" @click="onClose()">×</button>
         <div class="temperature">
             <p v-if="planetInfo.meanTemp" title="Surface temperature">mean: 
                 <span class="value" :style="{ color: temperatureColor(planetInfo.meanTemp) }"> 
@@ -73,10 +73,14 @@
         keys.sort((a, b) => (+a) - (+b));
         for (let key of keys) {
             if (key > temp) {
-                return this.temperatureColors.value[key];
+                return temperatureColors.value[key];
             }
         }
         return temperatureColors.value[keys[keys.length - 1]];
+    }
+
+    function onClose() {
+        emits("closeCard");
     }
 
 </script>
