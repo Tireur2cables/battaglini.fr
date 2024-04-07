@@ -1,5 +1,19 @@
 stages:          # List of stages for jobs, and their order of execution
+  - build
   - deploy
+
+build-job:
+  stage: build
+  tags:
+    - podman-in-podman
+  script:
+    - podman run -v ../battaglini.fr:/battaglini.fr docker.io/node:lts-bookworm /bin/bash -c "cd /battaglini.fr && npm ci && npm run build"
+  after_script:
+    - podman system prune -af
+    - cd
+    - rm -rf builds
+  only:
+    - merge_requests
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy
