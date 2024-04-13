@@ -2,23 +2,11 @@
 
     <div class="options">
         <div class="form-group">
-            <label>Speed</label>
+            <label>Technologies</label>
             <div class="input-select">
-                <div class="select-item">
-                    <input name="speed" id="realtime" type="radio" value="realtime" v-model="speed" @change="onSpeedChange">
-                    <label for="realtime">Realtime</label>
-                </div>
-                <div class="select-item">
-                    <input checked name="speed" id="day_sec" type="radio" value="day_sec" v-model="speed" @change="onSpeedChange">
-                    <label for="day_sec">1 day/sec</label>
-                </div>
-                <div class="select-item">
-                    <input name="speed" id="mon_sec" type="radio" value="mon_sec" v-model="speed" @change="onSpeedChange">
-                    <label for="mon_sec">1 mon/sec</label>
-                </div>
-                <div class="select-item">
-                    <input name="speed" id="idealized" type="radio" value="idealized" v-model="speed" @change="onSpeedChange">
-                    <label for="idealized">Idealized</label>
+                <div v-for="technology in TECHNOLOGIES" class="select-item">
+                    <input name="techno" :id="technology.name" type="radio" :value="technology.name" v-model="techno" @change="onTechnoChange">
+                    <label :for="technology.name">{{ technology.name[0].toLocaleUpperCase() + technology.name.slice(1).toLocaleLowerCase() }}</label>
                 </div>
             </div>
         </div>
@@ -29,17 +17,26 @@
 <script setup lang="ts">
     
     import { ref, onMounted } from 'vue';
+    import { TECHNOLOGIES } from '@/constants';
 
-    const speed = ref<string>("day_sec");
-    const emits = defineEmits(["speedChanged"]);
+    const props = defineProps({
+        selectedTechnology: {
+            type: Object,
+            required: true,
+        },
+    });
+
+    const techno = ref<string>("");
+    const emits = defineEmits(["technoChanged"]);
     
-    function onSpeedChange(e) {
-        speed.value = e.target.value;
-        emits('speedChanged', speed.value);
+    function onTechnoChange(e) {
+        techno.value = e.target.value;
+        emits('technoChanged', techno.value);
     }
 
     onMounted(() => {
-        emits('speedChanged', speed.value);
+        techno.value = (Object.keys(props.selectedTechnology).length == 0) ? "" : props.selectedTechnology.name;
+        emits('technoChanged', techno.value);
     });
 
 </script>
@@ -63,7 +60,7 @@
             background-color: var(--primary);
             border-radius: var(--radius);
             margin-top: 10px;
-            max-width: 115px;
+            max-width: 100%;
             margin-left: auto;
             overflow: hidden;
 
