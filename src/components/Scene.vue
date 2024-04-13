@@ -1,15 +1,8 @@
 <template>
 
     <canvas id="canvas"></canvas>
-    <Options @speedChanged="onSpeedChange"/>
-    <PlanetCard v-if="selectedPlanetCard != null" :planetInfo="selectedPlanetCard"  @closeCard="selectedPlanetCard = null"/>
-    <div class="date-display" :class="{disabled: idealizedSpeed}">
-        <div class="ico">
-            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z" fill="#ffffff" class="fill-000000"></path></svg>
-        </div>
-        <p>{{ date }}</p>
-    </div>
-
+    <Options :key="selectedTechnology" :selectedTechnology="(selectedTechnology) ? selectedTechnology : {}" @technoChanged="technoChanged"/>
+    <TechnologyCard v-if="selectedTechnologyCard != null" :technologyInfo="selectedTechnologyCard"  @closeCard="selectedTechnologyCard = null"/>
 </template>
 
 <script setup lang="ts">
@@ -19,27 +12,25 @@
     import { OrbitControls } from "three/addons/controls/OrbitControls";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
     // import { Lensflare, LensflareElement } from "three/examples/jsm/objects/Lensflare.js";
-    import { PLANETS } from "@/constants";
+    import { TECHNOLOGIES } from "@/constants";
     import Options from "@components/Options.vue";
-    import PlanetCard from "@components/PlanetCard.vue";
+    import TechnologyCard from "@components/TechnologyCard.vue";
 
     const loader = new GLTFLoader();
     const emits = defineEmits(["onSceneLoad"]);
-    const date = computed(() => {
-        const date = new Date(time.value);
-        const result = `${("0" + date.getDate()).slice(-2)}. ${("0" + (date.getMonth() + 1).toString()).slice(-2)}. ${date.getFullYear()}`;
 
-        return result;
-    });
+    const speed = ref<number>(86400);
+    const selectedTechnologyCard = ref(null);
 
-    const speed = ref<number>(1);
-    const idealizedSpeed = ref<boolean>(true);
-    const time = ref<number>(0);
-    const selectedPlanetCard = ref(null);
+    let clickedTechnology = null;
+    let selectedTechnology = ref(null);
+    let hoverObject = {
+        technology: null,
+        outline: null,
+    };
+    let technologies = [];
 
     onMounted(async () => {
-        time.value = Date.now();
-
         // Create scene
         const scene = createScene();
         const bacakgroundScene = createBackgroundScene();
@@ -50,7 +41,7 @@
 
         const controls = createControls(camera, renderer);
 
-        const planets = await createSolarSystem(scene);
+        await createSolarSystem(scene);
 
         const clock = new THREE.Clock();
 
@@ -58,50 +49,47 @@
 
         const raycaster = new THREE.Raycaster();
 
-        let hoverObject = {
-            planet: null,
-            outline: null,
-        };
-
-        let selectedPlanet = null;
-
-        let clickedPlanet = null;
-        
         renderer.autoClear = false;
         camera.layers.enable(1);
 
         renderer.setAnimationLoop(() => {
-            // Update planets
+            // Update technologies
             let delta = clock.getDelta();
-            for (let planet of planets) {
-                planet.tick(delta);
+            for (let technology of technologies) {
+                technology.tick(delta);
             }
-            // Make cameara follow selected planet
-            if (selectedPlanet) {
-                selectedPlanet.children[0].getWorldPosition(controls.target);
+            // Make cameara follow selected technology
+            if (selectedTechnology.value) {
+                selectedTechnology.value.children[0].getWorldPosition(controls.target);
+                let box = new THREE.Box3().setFromObject(selectedTechnology.value.children[0].children[0]);
+                let diameter = Math.max(Math.abs(box.max.x - box.min.x), Math.abs(box.max.y - box.min.y), Math.abs(box.max.z - box.min.z));
+                // Set default distance and target to sun
+                // Change min/max camera distance to suit given technology
+                controls.minDistance = (selectedTechnology.value.name === "nicolas") ? 60 : diameter * 1.25;
+                controls.maxDistance = (selectedTechnology.value.name === "nicolas") ? 500 : diameter * 2.5;
+                if (selectedTechnology.value.name === "nicolas") controls.target.set(0, 0, 0);
+
+                selectedTechnologyCard.value = selectedTechnology.value.userData;
             }
             controls.update();
             
-            // Planet hover effect
+            // Technology hover effect
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planets, true);
-            if (intersects.length > 0 && hoverObject.planet == null) {
-                hoverObject.planet = intersects[0].object;
-                hoverObject.outline = highlightPlanet(intersects[0].object);
+            const intersects = raycaster.intersectObjects(technologies, true);
+            if (intersects.length > 0 && hoverObject.technology == null) {
+                hoverObject.technology = intersects[0].object;
+                hoverObject.outline = highlightTechnology(intersects[0].object);
             }
-            else if (intersects.length > 0 && hoverObject.planet !== intersects[0].object) {
-                unhighlightPlanet(hoverObject.planet);
-                hoverObject.planet = intersects[0].object;
-                hoverObject.outline = highlightPlanet(intersects[0].object);
+            else if (intersects.length > 0 && hoverObject.technology !== intersects[0].object) {
+                unhighlightTechnology(hoverObject.technology);
+                hoverObject.technology = intersects[0].object;
+                hoverObject.outline = highlightTechnology(intersects[0].object);
             }
-            else if (intersects.length === 0 && hoverObject.planet != null) {
-                unhighlightPlanet(hoverObject.planet);
-                hoverObject.planet = null;
+            else if (intersects.length === 0 && hoverObject.technology != null) {
+                unhighlightTechnology(hoverObject.technology);
+                hoverObject.technology = null;
                 hoverObject.outline = null;
             }
-
-            // Update time
-            if (!idealizedSpeed.value) time.value += speed.value * 1000 * delta;
 
             renderer.clear();
             camera.layers.set(1);
@@ -132,75 +120,61 @@
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
-            if (hoverObject.planet != null) {
-                const planet = findMeshPlanet(hoverObject.planet);
-                if (planet) clickedPlanet = planet.name;
+            if (hoverObject.technology != null) {
+                const technology = findMeshTechnology(hoverObject.technology);
+                if (technology) clickedTechnology = technology.name;
             }
         });
 
        canvas.addEventListener("mouseup", (e) => {
-            if (!clickedPlanet) return;
+            if (!clickedTechnology) return;
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
-            if (hoverObject.planet != null) {
-                const planet = findMeshPlanet(hoverObject.planet);
-                if (planet.name !== clickedPlanet) {
-                    clickedPlanet = null; 
+            if (hoverObject.technology != null) {
+                const technology = findMeshTechnology(hoverObject.technology);
+                if (technology.name !== clickedTechnology) {
+                    clickedTechnology = null; 
                     return;
                 }
-                // Set default distance and target to sun
-                if (planet.name === "nicolas") { 
-                    controls.minDistance = 60;
-                    controls.maxDistance = 500;
-                    controls.target.set(0, 0, 0);
-                }
-                // Change min/max camera distance to suit given planet
-                else {
-                    let box = new THREE.Box3().setFromObject(planet.children[0].children[0]);
-                    let diameter = Math.abs(box.max.x - box.min.x);
-                    controls.minDistance = diameter * 1.25;
-                    controls.maxDistance = diameter * 2.5;
-                }
-                selectedPlanetCard.value = planet.userData;
-                selectedPlanet = planet;
-                clickedPlanet = null;
+                
+                selectedTechnology.value = technology;
+                clickedTechnology = null;
             }
         });
 
         emits('onSceneLoad');
     });
 
-    // Look through list of all planets and initialize them
+    // Look through list of all technologies and initialize them
     async function createSolarSystem(scene) {
-        const planets = []; // List of Object3D of planets
-        for (let planet of PLANETS) {
+        for (let technology of TECHNOLOGIES) {
             // Load 3D model
-            let gltf = await loader.loadAsync(`/assets/gltf/${planet.name}.glb`);
+            let gltf = await loader.loadAsync(`/assets/gltf/${technology.name}.glb`);
             let updateObject;
-            let userData = getUserDataFor(planet);
-            // Get the object the planet is orbitting
-            if (planet.orbitObject != null) {
-                let orbitObject = findOrbitObject(planets, planet.orbitObject);
-                gltf.scene.position.z = planet.scaledOrbitalRadius;
-                gltf.scene.rotation.z = THREE.MathUtils.degToRad(planet.axialTilt ?? 0);
+            let userData = getUserDataFor(technology);
+            // Get the object the technology is orbitting
+            if (technology.orbitObject) {
+                let orbitObject = findOrbitObject(technologies, technology.orbitObject);
+                gltf.scene.position.z = technology.scaledOrbitalRadius;
+                gltf.scene.rotation.z = THREE.MathUtils.degToRad(technology.axialTilt ?? 0);
 
                 // Create a pivot for orbit
                 let pivot = new THREE.Object3D();
-                pivot.name = planet.name;
+                pivot.name = technology.name;
                 pivot.userData = userData;
                 pivot.userData.isPivot = true;
                 pivot.add(gltf.scene);
-                pivot.rotation.x = THREE.MathUtils.degToRad(planet.orbitalInclination);
+                pivot.rotation.x = THREE.MathUtils.degToRad(technology.orbitalInclination);
 
                 updateObject = pivot;
 
-                // Create trajectory for planet's orbit
+                // Create trajectory for technology's orbit
                 const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
                 material.side = THREE.DoubleSide;
                 material.transparent = true;
                 material.opacity = 0.15;
-                let trajectory = new THREE.Mesh(new THREE.TorusGeometry(planet.scaledOrbitalRadius, 0.05, 8, 64 ), material);
+                let trajectory = new THREE.Mesh(new THREE.TorusGeometry(technology.scaledOrbitalRadius, 0.05, 8, 64 ), material);
                 trajectory.rotation.x = THREE.MathUtils.degToRad(90);
                 pivot.add(trajectory);
 
@@ -208,32 +182,30 @@
                 gltf.scene.children[0].userData.canHover = true;
 
                 orbitObject.add(pivot);
-                planets.push(pivot);
+                technologies.push(pivot);
             }
             else {
                 // This is basically only for Sun
                 let group = new THREE.Group();
-                gltf.scene.rotation.z = THREE.MathUtils.degToRad(planet.axialTilt ?? 0);
+                gltf.scene.rotation.z = THREE.MathUtils.degToRad(technology.axialTilt ?? 0);
                 group.add(gltf.scene);
                 group.userData = userData;
                 gltf.scene.userData.canHover = true;
-                group.name = planet.name;
+                group.name = technology.name;
 
                 updateObject = group;
 
                 scene.add(group);
-                planets.push(group);
+                technologies.push(group);
             }
 
             // Update event
             createUpdateLoop(updateObject);
         }
-
-        return planets;
     }
 
-    // Creates outline around planet and makes trajectory brighter
-    function highlightPlanet(mesh) {
+    // Creates outline around technology and makes trajectory brighter
+    function highlightTechnology(mesh) {
         if (!mesh.parent.userData.canHover) return;
         mesh.parent.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
@@ -250,8 +222,8 @@
         return null;
     }
     
-    // Removes outline from planet and makes trajectory transparent
-    function unhighlightPlanet(mesh) {
+    // Removes outline from technology and makes trajectory transparent
+    function unhighlightTechnology(mesh) {
         if (!mesh?.parent.userData.canHover) return;
         mesh.parent.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
@@ -264,48 +236,44 @@
         }
     }
 
-    // Finds the correct object to orbit in the list of planets
-    function findOrbitObject(planets, name) {
-        let planet = planets.find(p => p.name === name);
-        if (planet.userData.isPivot) {
-            return planet.children.find(p => !p.userData.isPivot);
+    // Finds the correct object to orbit in the list of technologies
+    function findOrbitObject(technologies, name) {
+        let technology = technologies.find(p => p.name === name);
+        if (technology.userData.isPivot) {
+            return technology.children.find(p => !p.userData.isPivot);
         }
-        return planet;
+        return technology;
     }
 
-    // Return the planet that contains given mesh
-    function findMeshPlanet(mesh) {
-        if (mesh.userData.isPlanet) return mesh;
-        return mesh.parent == null ? null : findMeshPlanet(mesh.parent);
+    // Return the technology that contains given mesh
+    function findMeshTechnology(mesh) {
+        if (mesh.userData.isTechnology) return mesh;
+        return mesh.parent == null ? null : findMeshTechnology(mesh.parent);
     }
 
-    // Adds tick method to planet that runs every frame 
-    function createUpdateLoop(planet) {
-        planet.tick = (e) => {
-            // Planet orbit around its parent
-            if (planet.userData.orbitalRadius !== 0) {
-                planet.userData.currentDistance += idealizedSpeed.value
-                ? Math.max((e * planet.userData.orbitalVelocity * planet.userData.orbitalRadius / 100), 6000)
-                : (planet.userData.orbitalVelocity * e) * speed.value;
+    // Adds tick method to technology that runs every frame 
+    function createUpdateLoop(technology) {
+        technology.tick = (e) => {
+            // Technology orbit around its parent
+            if (technology.userData.orbitalRadius !== 0) {
+                technology.userData.currentDistance += (technology.userData.orbitalVelocity * e) * speed.value;
 
-                if (planet.userData.currentDistance > planet.userData.orbitalCircumference) {
-                    planet.userData.currentDistance = planet.userData.currentDistance % planet.userData.orbitalCircumference
+                if (technology.userData.currentDistance > technology.userData.orbitalCircumference) {
+                    technology.userData.currentDistance = technology.userData.currentDistance % technology.userData.orbitalCircumference
                 }
 
-                planet.rotation.y = planet.userData.currentDistance / planet.userData.orbitalCircumference * Math.PI * 2;
+                technology.rotation.y = technology.userData.currentDistance / technology.userData.orbitalCircumference * Math.PI * 2;
             }
 
-            // Planet rotation around its own axis 
-            planet.userData.currentRotation += idealizedSpeed.value 
-            ? (planet.userData.planetCircumference * e * 0.1)
-            : (planet.userData.rotationVelocity * e) * speed.value;
-            let rY = planet.userData.currentRotation / planet.userData.planetCircumference * Math.PI * 2;
+            // Technology rotation around its own axis 
+            technology.userData.currentRotation += (technology.userData.rotationVelocity * e) * speed.value;
+            let rY = technology.userData.currentRotation / technology.userData.technologyCircumference * Math.PI * 2;
             // Find the Group that holds the Meshes and roatate it
-            if (planet.userData.isPivot) {
-                planet.children[0].children[0].rotation.y = rY;
+            if (technology.userData.isPivot) {
+                technology.children[0].children[0].rotation.y = rY;
             }
             else {
-                planet.children[0].rotation.y = rY;
+                technology.children[0].rotation.y = rY;
             }
         };  
     }
@@ -454,51 +422,40 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    // Event that gets called when speed option changed
-    function onSpeedChange(value) {
-        idealizedSpeed.value = false;
-        switch (value) {
-            case "realtime":
-                speed.value = 1;
-                break;
-            case "day_sec": 
-                speed.value = 86400;
-                break;
-            case "mon_sec":
-                speed.value = 2419200;
-                break;
-            case "idealized":
-                idealizedSpeed.value = true;
-                break;
-        }
+    // triggerred when technomenu is clicked
+    function technoChanged(new_techno) {
+        clickedTechnology = new_techno;
+        const technology = getTechnoFromName(new_techno);
+        selectedTechnology.value = technology;
+        hoverObject.technology = technology;
     }
 
-    function getUserDataFor(planet) {
+    function getTechnoFromName(name) {
+        for (let i = 0; i < technologies.length; i++) {
+            if (technologies[i].name === name) return technologies[i];
+        }
+        return null;
+    }
+
+    function getUserDataFor(technology) {
         return {
-            name: planet.name,
-            displayName: planet.displayName,
-            caption: planet.caption,
-            description: planet.description,
-            year: planet.year,
-            day: planet.day,
-            distanceFromSun: planet.distanceFromSun,
-            distance: planet.distance,
-            moons: planet.moons,
-            meanTemp: planet.meanTemp,
-            minTemp: planet.minTemp,
-            maxTemp: planet.maxTemp,
-            orbitObject: planet.orbitObject,
-            isPlanet: true,
-            orbitalVelocity: planet.orbitalVelocity,
-            orbitalRadius: planet.orbitalRadius,
-            currentDistance: 2 * Math.PI * planet.orbitalRadius * Math.random(),
+            orbitObject: technology.orbitObject,
+            orbitalVelocity: technology.orbitalVelocity,
+            orbitalRadius: technology.orbitalRadius,
+            currentDistance: 2 * Math.PI * technology.orbitalRadius * Math.random(),
             currentRotation: 0,
-            planetCircumference: 2 * Math.PI * planet.radius,
-            orbitalCircumference: 2 * Math.PI * planet.orbitalRadius,
-            scaledOrbitalRadius: planet.scaledOrbitalRadius,
+            technologyCircumference: 2 * Math.PI * technology.radius,
+            orbitalCircumference: 2 * Math.PI * technology.orbitalRadius,
+            scaledOrbitalRadius: technology.scaledOrbitalRadius,
+            rotationVelocity: technology.rotationVelocity,
             isPivot: false,
-            radius: planet.radius,
-            rotationVelocity: planet.rotationVelocity,
+            isTechnology: true,
+            name: technology.name,
+            displayName: technology.displayName,
+            caption: technology.caption,
+            description: technology.description,
+            containerManager: technology.containerManager,
+            sourceCode: technology.sourceCode,
         };
     }
 
