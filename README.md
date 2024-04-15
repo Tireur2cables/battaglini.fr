@@ -1,7 +1,6 @@
 # Battaglini.fr
 
-<img alt="GitHub" src="https://img.shields.io/github/license/Tireur2cables/battaglini.fr?label=license&style=flat-square"> 
-[![Vulnerabilities](http://192.168.1.10:9000/api/project_badges/measure?project=Tireur2cables_battaglini.fr_AY7jYJIiOdaeigZuWfUP&metric=vulnerabilities&token=sqb_0c4b8708057c59e17213cd0af53b991be8f7a3aa)](http://192.168.1.10:9000/dashboard?id=Tireur2cables_battaglini.fr_AY7jYJIiOdaeigZuWfUP)
+<img alt="GitHub" src="https://img.shields.io/github/license/Tireur2cables/battaglini.fr?label=license&style=flat-square">
 
 ## What is it ?
 
