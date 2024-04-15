@@ -247,7 +247,6 @@
             position: absolute;
             top: 50px;
             right: 10px;
-            font-weight: 600;
             text-shadow: -4px 1px 11px #000;
             font-size: 14px;
             font-weight: lighter;
