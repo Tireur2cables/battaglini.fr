@@ -32,8 +32,6 @@ sonarqube-check:
       - .sonar/cache
   script: 
     - sonar-scanner
-  after_script:
-    - podman system prune -af --volumes
   allow_failure: true
   only:
     - main
