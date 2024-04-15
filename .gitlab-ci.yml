@@ -18,8 +18,10 @@ build-job:
 
 sonarqube-check:
   stage: analysis
+  tags:
+    - podman
   image: 
-    name: sonarsource/sonar-scanner-cli:latest
+    name: docker.io/sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
