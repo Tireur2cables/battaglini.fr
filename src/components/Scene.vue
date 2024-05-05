@@ -2,7 +2,7 @@
 
     <canvas id="canvas"></canvas>
     <Options :key="selectedTechnology" :selectedTechnology="(selectedTechnology) ? selectedTechnology : {}" @technoChanged="technoChanged"/>
-    <TechnologyCard v-if="selectedTechnologyCard != null" :technologyInfo="selectedTechnologyCard"  @closeCard="selectedTechnologyCard = null"/>
+    <TechnologyCard v-if="selectedTechnologyCard" :technologyInfo="selectedTechnologyCard" @closeCard="selectedTechnology = null"/>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +63,7 @@
                 selectedTechnology.value.children[0].getWorldPosition(controls.target);
                 let box = new THREE.Box3().setFromObject(selectedTechnology.value.children[0].children[0]);
                 let diameter = Math.max(Math.abs(box.max.x - box.min.x), Math.abs(box.max.y - box.min.y), Math.abs(box.max.z - box.min.z));
-                // Set default distance and target to sun
+                // Set default distance and target to nicolas
                 // Change min/max camera distance to suit given technology
                 controls.minDistance = (selectedTechnology.value.name === "nicolas") ? 60 : diameter * 1.25;
                 controls.maxDistance = (selectedTechnology.value.name === "nicolas") ? 500 : diameter * 2.5;
@@ -71,6 +71,8 @@
 
                 selectedTechnologyCard.value = selectedTechnology.value.userData;
             }
+            else selectedTechnologyCard.value = null;
+            
             controls.update();
             
             // Technology hover effect
@@ -428,6 +430,7 @@
         const technology = getTechnoFromName(new_techno);
         selectedTechnology.value = technology;
         hoverObject.technology = technology;
+        clickedTechnology = null;
     }
 
     function getTechnoFromName(name) {
